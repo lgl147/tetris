@@ -1,8 +1,14 @@
 <template>
   <div class="container">
-    <div>分数: {{ score }}</div>
-    <div class="next" v-if="currentShape && timer">
-      下一个是: {{ nextShape }}
+    <div
+      class="status d-flex justify-space-between align-center"
+      :style="'width: ' + width * grid + 'px'"
+    >
+      <div>分数: {{ score }}</div>
+      <div class="next" v-if="currentShape && timer">
+        下一个是: {{ nextShape }}
+      </div>
+      <v-btn @click="start" variant="outlined">开始</v-btn>
     </div>
     <div class="gamearea" :style="'width: ' + width * grid + 'px'">
       <div
@@ -22,11 +28,11 @@
       </div>
     </div>
 
-    <div class="btns">
+    <!-- <div class="btns">
       <v-btn @click="start">开始</v-btn>
       <br />
       <v-btn @click="pause">{{ timer ? "" : "取消" }}暂停</v-btn>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -168,7 +174,7 @@ function falling() {
     let line = 0;
     dataList.value.forEach((row: any, rowIndex: number) => {
       if (row.every((col: any) => col == 2)) {
-        console.log(`第${rowIndex}行`);
+        // console.log(`第${rowIndex}行`);
         line++;
         dataList.value.splice(rowIndex, 1);
         dataList.value.unshift(new Array(width).fill(0));
@@ -455,5 +461,8 @@ function gameover() {
       margin-bottom: 10px;
     }
   }
+}
+.status {
+  height: 64px;
 }
 </style>
