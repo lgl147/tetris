@@ -5,10 +5,17 @@
       :style="'width: ' + width * grid + 'px'"
     >
       <div>分数: {{ score }}</div>
-      <div class="next" v-if="currentShape && timer">
-        下一个是: {{ nextShape }}
+      <div class="next" v-if="currentShape">下一个是: {{ nextShape }}</div>
+      <div>
+        <v-btn @click="start" variant="outlined">开始</v-btn>
+        <v-btn
+          v-if="currentShape"
+          @click="pause"
+          size="small"
+          :icon="timer ? 'mdi-pause' : 'mdi-play'"
+          class="ml-2"
+        ></v-btn>
       </div>
-      <v-btn @click="start" variant="outlined">开始</v-btn>
     </div>
     <div class="gamearea" :style="'width: ' + width * grid + 'px'">
       <div
@@ -23,7 +30,7 @@
           :class="{ solid: col > 0 }"
           :style="`width: ${grid}px;height: ${grid}px`"
         >
-          <!-- {{ col }} -->
+          {{ col }}
         </div>
       </div>
     </div>
@@ -42,7 +49,6 @@ import { onMounted, ref } from "vue";
 onMounted(() => {
   initGame();
   bindOperate();
-  // grid.value = (window.innerWidth - 40) / width;
 });
 
 let width = 10;
@@ -131,10 +137,9 @@ function createShape() {
   if (nextShape) {
     currentShapeName = nextShape;
   } else {
-    currentShapeName =
-      shapeNames[Math.floor(Math.random() * shapeNames.length)];
+    currentShapeName = randomShape();
   }
-  nextShape = shapeNames[Math.floor(Math.random() * shapeNames.length)];
+  nextShape = randomShape();
 
   let startIndex = 4;
   // 有些图形需要往右挪一点儿初始位置才能居中
@@ -147,6 +152,10 @@ function createShape() {
   currentShape.value.forEach((item: any) => {
     dataList.value[item[1]][item[0]] = 1;
   });
+}
+
+function randomShape() {
+  return shapeNames[Math.floor(Math.random() * shapeNames.length)];
 }
 
 function falling() {
@@ -235,6 +244,10 @@ function bindOperate() {
     }
     if (e.key == "ArrowUp") {
       rotate();
+    }
+
+    if (e.key == "c") {
+      nextShape = "I";
     }
 
     if (!touchLimit) landing(currentShape.value, old);
