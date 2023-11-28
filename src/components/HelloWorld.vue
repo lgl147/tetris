@@ -10,7 +10,7 @@
         <v-btn @click="start" variant="outlined">开始</v-btn>
         <v-btn
           v-if="currentShape"
-          @click="pause"
+          @click="fallControl"
           size="small"
           :icon="timer ? 'mdi-pause' : 'mdi-play'"
           class="ml-2"
@@ -34,12 +34,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="btns">
-      <v-btn @click="start">开始</v-btn>
-      <br />
-      <v-btn @click="pause">{{ timer ? "" : "取消" }}暂停</v-btn>
-    </div> -->
   </div>
 </template>
 
@@ -68,11 +62,11 @@ function initGame() {
   for (let i = 0; i < height; i++) {
     dataList.value.push(new Array(width).fill(0));
   }
-  timer.value = setInterval(() => falling(), 500);
-  console.log("开始游戏");
+
+  fallControl();
 }
 
-function pause() {
+function fallControl() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
