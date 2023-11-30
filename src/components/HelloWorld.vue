@@ -30,7 +30,7 @@
           :class="{ solid: col > 0 }"
           :style="`width: ${grid}px;height: ${grid}px`"
         >
-          {{ col }}
+          <!-- {{ col }} -->
         </div>
       </div>
     </div>
@@ -54,26 +54,17 @@ let timer = ref<any>(null);
 let score = ref<any>(0);
 
 function initGame() {
+  nextShape = null;
   score.value = 0;
-  if (timer.value) {
-    clearInterval(timer.value);
-    timer.value = null;
-  }
   dataList.value = [];
   for (let i = 0; i < height; i++) {
     dataList.value.push(new Array(width).fill(0));
   }
-
-  fallControl();
 }
 
 function fallControl() {
-  if (timer.value) {
-    clearInterval(timer.value);
-    timer.value = null;
-  } else {
-    timer.value = setInterval(() => falling(), 500);
-  }
+  if (timer.value) clearInterval(timer.value);
+  timer.value = setInterval(() => falling(), 500);
 }
 
 const shapeNames = Object.keys(shapes);
@@ -108,6 +99,13 @@ function randomShape() {
   return shapeNames[Math.floor(Math.random() * shapeNames.length)];
 }
 
+let scores: any = {
+  1: 10,
+  2: 30,
+  3: 50,
+  4: 100,
+};
+
 function falling() {
   if (!currentShape.value) return;
   let touchLimit = false;
@@ -130,7 +128,7 @@ function falling() {
       dataList.value[item[1]][item[0]] = 2;
     });
     // 消除
-    let line = 0;
+    let line: number = 0;
     dataList.value.forEach((row: any, rowIndex: number) => {
       if (row.every((col: any) => col == 2)) {
         // console.log(`第${rowIndex}行`);
@@ -139,20 +137,7 @@ function falling() {
         dataList.value.unshift(new Array(width).fill(0));
       }
     });
-    switch (line) {
-      case 1:
-        score.value -= -10;
-        break;
-      case 2:
-        score.value -= -30;
-        break;
-      case 3:
-        score.value -= -60;
-        break;
-      case 4:
-        score.value -= -100;
-        break;
-    }
+    score.value -= scores[line];
     // 到顶了
     if (dataList.value[0].includes(2)) gameover();
     createShape();
@@ -387,6 +372,7 @@ function landing(newPosition: any, oldPosition: any) {
 
 function start() {
   initGame();
+  fallControl();
   createShape();
 }
 
