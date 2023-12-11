@@ -137,7 +137,7 @@ function falling() {
         dataList.value.unshift(new Array(width).fill(0));
       }
     });
-    score.value -= scores[line];
+    if (line > 0) score.value += scores[line];
     // 到顶了
     if (dataList.value[0].includes(2)) gameover();
     createShape();
