@@ -55,6 +55,8 @@ let score = ref<any>(0);
 
 function initGame() {
   nextShape = null;
+  clearInterval(timer.value);
+  timer.value = null;
   score.value = 0;
   dataList.value = [];
   for (let i = 0; i < height; i++) {
@@ -63,8 +65,12 @@ function initGame() {
 }
 
 function fallControl() {
-  if (timer.value) clearInterval(timer.value);
-  timer.value = setInterval(() => falling(), 500);
+  if (timer.value) {
+    clearInterval(timer.value);
+    timer.value = null;
+  } else {
+    timer.value = setInterval(() => falling(), 500);
+  }
 }
 
 const shapeNames = Object.keys(shapes);
