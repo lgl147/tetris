@@ -30,7 +30,7 @@
           :class="{ solid: col > 0 }"
           :style="`width: ${grid}px;height: ${grid}px`"
         >
-          <!-- {{ col }} -->
+          {{ col }}
         </div>
       </div>
     </div>
@@ -116,7 +116,7 @@ function falling() {
   if (!currentShape.value) return;
   let touchLimit = false;
   currentShape.value.forEach((item: any) => {
-    if (item[1] >= 19) {
+    if (item[1] >= height - 1) {
       touchLimit = true;
       return;
     }
@@ -143,6 +143,7 @@ function falling() {
         dataList.value.unshift(new Array(width).fill(0));
       }
     });
+    // 加分
     if (line > 0) score.value += scores[line];
     // 到顶了
     if (dataList.value[0].includes(2)) gameover();
