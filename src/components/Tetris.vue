@@ -19,7 +19,11 @@
         ></v-btn>
       </div>
     </div>
-    <div class="gamearea" :style="'width: ' + width * grid + 'px'">
+    <div
+      class="gamearea"
+      ref="gamearea"
+      :style="'width: ' + width * grid + 'px'"
+    >
       <div
         v-for="(row, rowIndex) in dataList"
         :key="rowIndex"
@@ -42,7 +46,7 @@
 <script setup lang="ts">
 import shapes from "./shapes";
 import states from "./states";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 
 onMounted(() => {
   initGame();
@@ -61,10 +65,21 @@ let shapeNums = {
 
 let width = 10;
 let height = 20;
-let grid = 40;
+let grid = ref(40);
+let gamearea = ref();
 let dataList = ref<any>();
 let timer = ref<any>(null);
-let score = ref<any>(0);
+let score = ref<any>(9990);
+
+function handleResize() {
+  grid.value = (window.innerHeight - 110) / height;
+}
+
+handleResize();
+
+window.onresize = () => {
+  handleResize();
+};
 
 function initGame() {
   nextShape = null;
@@ -77,12 +92,16 @@ function initGame() {
   }
 }
 
+let interval = 500;
 function fallControl() {
   if (timer.value) {
     clearInterval(timer.value);
     timer.value = null;
   } else {
-    timer.value = setInterval(() => falling(), 500);
+    timer.value = setInterval(() => {
+      falling();
+      if (interval > 100) interval -= Math.floor(score.value / 1000) * 100;
+    }, interval);
   }
 }
 
@@ -127,6 +146,7 @@ let scores: any = {
 
 function falling() {
   if (!currentShape.value) return;
+
   let touchLimit = false;
   currentShape.value.forEach((item: any) => {
     if (item[1] >= height - 1) {
@@ -159,7 +179,10 @@ function falling() {
     // 加分
     if (line > 0) score.value += scores[line];
     // 到顶了
-    if (dataList.value[0].includes(2)) gameover();
+    if (dataList.value[0].some((item) => item >= 100)) {
+      gameover();
+      return;
+    }
     createShape();
   }
 }
@@ -273,10 +296,11 @@ function start() {
   createShape();
 }
 
-function gameover() {
+async function gameover() {
   clearInterval(timer.value);
   timer.value = null;
-
+  currentShape.value = null;
+  // await nextTick();
   alert("游戏结束");
 }
 </script>
@@ -292,6 +316,8 @@ function gameover() {
     // width: 400px;
     border: 0.5px solid;
     border-radius: 4px;
+    flex: 1;
+    overflow: hidden;
     .col {
       // box-sizing: border-box;
       border: 0.5px dashed #ccc;
