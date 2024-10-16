@@ -7,7 +7,9 @@
       <div>分数: {{ score }}</div>
       <div class="next" v-if="currentShape">下一个是: {{ nextShape }}</div>
       <div>
-        <v-btn @click="start" variant="outlined">开始</v-btn>
+        <v-btn @click="start" variant="outlined">{{
+          currentShape ? "重新开始" : "开始"
+        }}</v-btn>
         <v-btn
           v-if="currentShape"
           @click="fallControl"
@@ -27,10 +29,10 @@
           v-for="(col, colIndex) in row"
           :key="colIndex"
           class="col"
-          :class="{ solid: col > 0 }"
+          :class="col > 0 ? `solid shape${col}` : ''"
           :style="`width: ${grid}px;height: ${grid}px`"
         >
-          {{ col }}
+          <!-- {{ col }} -->
         </div>
       </div>
     </div>
@@ -39,6 +41,7 @@
 
 <script setup lang="ts">
 import shapes from "./shapes";
+import states from "./states";
 import { onMounted, ref } from "vue";
 
 onMounted(() => {
@@ -46,9 +49,19 @@ onMounted(() => {
   bindOperate();
 });
 
+let shapeNums = {
+  O: 1,
+  S: 2,
+  Z: 3,
+  T: 4,
+  L: 5,
+  J: 6,
+  I: 7,
+};
+
 let width = 10;
 let height = 20;
-let grid = ref(40);
+let grid = 40;
 let dataList = ref<any>();
 let timer = ref<any>(null);
 let score = ref<any>(0);
@@ -97,7 +110,7 @@ function createShape() {
   });
 
   currentShape.value.forEach((item: any) => {
-    dataList.value[item[1]][item[0]] = 1;
+    dataList.value[item[1]][item[0]] = shapeNums[currentShapeName];
   });
 }
 
@@ -120,7 +133,7 @@ function falling() {
       touchLimit = true;
       return;
     }
-    if (dataList.value[item[1] + 1][item[0]] == 2) {
+    if (dataList.value[item[1] + 1][item[0]] >= 100) {
       touchLimit = true;
     }
   });
@@ -131,12 +144,12 @@ function falling() {
   } else {
     // 成功落地
     currentShape.value.forEach((item: any) => {
-      dataList.value[item[1]][item[0]] = 2;
+      dataList.value[item[1]][item[0]] = 100 + shapeNums[currentShapeName];
     });
     // 消除
     let line: number = 0;
     dataList.value.forEach((row: any, rowIndex: number) => {
-      if (row.every((col: any) => col == 2)) {
+      if (row.every((col: any) => col >= 100)) {
         // console.log(`第${rowIndex}行`);
         line++;
         dataList.value.splice(rowIndex, 1);
@@ -163,7 +176,7 @@ function bindOperate() {
         if (item[0] >= width - 1) {
           touchLimit = true;
         }
-        if (dataList.value[item[1]][item[0] + 1] == 2) {
+        if (dataList.value[item[1]][item[0] + 1] >= 100) {
           touchLimit = true;
         }
       });
@@ -174,7 +187,7 @@ function bindOperate() {
         if (item[0] < 1) {
           touchLimit = true;
         }
-        if (dataList.value[item[1]][item[0] - 1] == 2) {
+        if (dataList.value[item[1]][item[0] - 1] >= 100) {
           touchLimit = true;
         }
       });
@@ -197,129 +210,6 @@ function bindOperate() {
 }
 
 let currentState = 0;
-
-let states: any = {
-  I: [
-    [
-      [1, -1],
-      [0, 0],
-      [-1, 1],
-      [-2, 2],
-    ],
-    [
-      [-1, 1],
-      [0, 0],
-      [1, -1],
-      [2, -2],
-    ],
-  ],
-  S: [
-    [
-      [1, 0],
-      [0, -1],
-      [-1, 0],
-      [-2, -1],
-    ],
-    [
-      [-1, 0],
-      [0, 1],
-      [1, 0],
-      [2, 1],
-    ],
-  ],
-  Z: [
-    [
-      [-2, 0],
-      [-1, -1],
-      [0, 0],
-      [1, -1],
-    ],
-    [
-      [2, 0],
-      [1, 1],
-      [0, 0],
-      [-1, 1],
-    ],
-  ],
-  T: [
-    [
-      [1, 1],
-      [1, -1],
-      [0, 0],
-      [-1, 1],
-    ],
-    [
-      [-1, 1],
-      [1, 1],
-      [0, 0],
-      [-1, -1],
-    ],
-    [
-      [-1, -1],
-      [-1, 1],
-      [0, 0],
-      [1, -1],
-    ],
-    [
-      [1, -1],
-      [-1, -1],
-      [0, 0],
-      [1, 1],
-    ],
-  ],
-  L: [
-    [
-      [1, 1],
-      [0, 0],
-      [-1, -1],
-      [-2, 0],
-    ],
-    [
-      [-1, 1],
-      [0, 0],
-      [1, -1],
-      [0, -2],
-    ],
-    [
-      [-1, -1],
-      [0, 0],
-      [1, 1],
-      [2, 0],
-    ],
-    [
-      [1, -1],
-      [0, 0],
-      [-1, 1],
-      [0, 2],
-    ],
-  ],
-  J: [
-    [
-      [1, 1],
-      [0, 0],
-      [-1, -1],
-      [0, -2],
-    ],
-    [
-      [-1, 1],
-      [0, 0],
-      [1, -1],
-      [2, 0],
-    ],
-    [
-      [-1, -1],
-      [0, 0],
-      [1, 1],
-      [0, 2],
-    ],
-    [
-      [1, -1],
-      [0, 0],
-      [-1, 1],
-      [-2, 0],
-    ],
-  ],
-};
 
 function rotate() {
   if (!currentShapeName || !currentShape.value) return;
@@ -345,7 +235,7 @@ function rotate() {
       touchRight = true;
       newPosition[0] = width - 1;
     }
-    if (dataList.value[newPosition[1]][newPosition[0]] == 2) hasRepeat = true;
+    if (dataList.value[newPosition[1]][newPosition[0]] >= 100) hasRepeat = true;
   });
   if (hasRepeat) return;
   states[currentShapeName][currentState].forEach((item: any, index: any) => {
@@ -373,7 +263,7 @@ function landing(newPosition: any, oldPosition: any) {
     dataList.value[item[1]][item[0]] = 0;
   });
   newPosition.forEach((item: any) => {
-    dataList.value[item[1]][item[0]] = 1;
+    dataList.value[item[1]][item[0]] = shapeNums[currentShapeName];
   });
 }
 
@@ -394,19 +284,63 @@ function gameover() {
 <style lang="scss" scoped>
 .container {
   padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   .gamearea {
     // width: 400px;
     border: 0.5px solid;
+    border-radius: 4px;
     .col {
       // box-sizing: border-box;
-      border: 0.5px solid;
+      border: 0.5px dashed #ccc;
       display: inline-flex;
       justify-content: center;
       align-items: center;
       transition: all 0.1s;
     }
+
     .solid {
+      color: white;
+      text-shadow: 0 1px 1px black;
+      border-radius: 4px;
+    }
+
+    .shape1,
+    .shape101 {
+      // O
+      background-color: yellow;
+    }
+    .shape2,
+    .shape102 {
+      // S
       background-color: red;
+    }
+    .shape3,
+    .shape103 {
+      // Z
+      background-color: green;
+    }
+    .shape4,
+    .shape104 {
+      // T
+      background-color: purple;
+    }
+    .shape5,
+    .shape105 {
+      // L
+      background-color: orange;
+    }
+    .shape6,
+    .shape106 {
+      // J
+      background-color: pink;
+    }
+    .shape7,
+    .shape107 {
+      // I
+      background-color: blue;
     }
   }
   .btns {
