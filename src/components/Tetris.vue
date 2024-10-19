@@ -1,46 +1,48 @@
 <template>
   <div class="container">
-    <div
-      class="status d-flex justify-space-between align-center flex-wrap text-overline"
-      :style="'width: ' + width * grid + 'px'"
-    >
-      <div>分数: {{ score }}</div>
-      <div class="next" v-if="currentShape">下一个是: {{ nextShape }}</div>
-      <v-btn @click="start" variant="outlined" size="small">{{
-        currentShape ? "重新开始" : "开始"
-      }}</v-btn>
-      <v-btn
-        v-if="currentShape"
-        @click="fallControl"
-        size="x-small"
-        :icon="timer ? 'mdi-pause' : 'mdi-play'"
-        class="ml-2"
-      ></v-btn>
-    </div>
-    <div
-      class="gamearea"
-      ref="gamearea"
-      v-touch="{
-        left: swipeLeft,
-        right: swipeRight,
-        up: swipeUp,
-        down: swipeDown,
-      }"
-      :style="'width: ' + width * grid + 'px'"
-    >
+    <div>
       <div
-        v-for="(row, rowIndex) in dataList"
-        :key="rowIndex"
-        class="row d-flex"
+        class="status d-flex justify-space-between align-center flex-wrap text-overline"
+        :style="'width: ' + width * grid + 'px'"
+      >
+        <div>分数: {{ score }}</div>
+        <div class="next" v-if="currentShape">下一个是: {{ nextShape }}</div>
+        <v-btn @click="start" variant="outlined" size="small">{{
+          currentShape ? "重新开始" : "开始"
+        }}</v-btn>
+        <v-btn
+          v-if="currentShape"
+          @click="fallControl"
+          size="x-small"
+          :icon="timer ? 'mdi-pause' : 'mdi-play'"
+          class="ml-2"
+        ></v-btn>
+      </div>
+      <div
+        class="gamearea"
+        ref="gamearea"
+        v-touch="{
+          left: swipeLeft,
+          right: swipeRight,
+          up: swipeUp,
+          down: swipeDown,
+        }"
+        :style="'width: ' + width * grid + 'px'"
       >
         <div
-          v-for="(col, colIndex) in row"
-          :key="colIndex"
-          class="col"
-          :class="col > 0 ? `solid shape${col}` : ''"
-          :style="`width: ${grid}px;height: ${grid}px`"
+          v-for="(row, rowIndex) in dataList"
+          :key="rowIndex"
+          class="row d-flex"
         >
-          <!-- {{ col }} -->
+          <div
+            v-for="(col, colIndex) in row"
+            :key="colIndex"
+            class="col"
+            :class="col > 0 ? `solid shape${col}` : ''"
+            :style="`width: ${grid}px;height: ${grid}px`"
+          >
+            <!-- {{ col }} -->
+          </div>
         </div>
       </div>
     </div>
