@@ -1,27 +1,31 @@
 <template>
   <div class="container">
     <div
-      class="status d-flex justify-space-between align-center"
+      class="status d-flex justify-space-between align-center flex-wrap text-overline"
       :style="'width: ' + width * grid + 'px'"
     >
       <div>分数: {{ score }}</div>
       <div class="next" v-if="currentShape">下一个是: {{ nextShape }}</div>
-      <div>
-        <v-btn @click="start" variant="outlined">{{
-          currentShape ? "重新开始" : "开始"
-        }}</v-btn>
-        <v-btn
-          v-if="currentShape"
-          @click="fallControl"
-          size="small"
-          :icon="timer ? 'mdi-pause' : 'mdi-play'"
-          class="ml-2"
-        ></v-btn>
-      </div>
+      <v-btn @click="start" variant="outlined" size="small">{{
+        currentShape ? "重新开始" : "开始"
+      }}</v-btn>
+      <v-btn
+        v-if="currentShape"
+        @click="fallControl"
+        size="x-small"
+        :icon="timer ? 'mdi-pause' : 'mdi-play'"
+        class="ml-2"
+      ></v-btn>
     </div>
     <div
       class="gamearea"
       ref="gamearea"
+      v-touch="{
+        left: swipeLeft,
+        right: swipeRight,
+        up: swipeUp,
+        down: swipeDown,
+      }"
       :style="'width: ' + width * grid + 'px'"
     >
       <div
@@ -72,7 +76,7 @@ let timer = ref<any>(null);
 let score = ref<any>(9990);
 
 function handleResize() {
-  grid.value = (window.innerHeight - 110) / height;
+  grid.value = (window.innerHeight - 64 - 40 - 100) / height;
 }
 
 handleResize();
@@ -232,6 +236,54 @@ function bindOperate() {
   };
 }
 
+function swipeLeft() {
+  if (!currentShape.value) return;
+  let old = JSON.parse(JSON.stringify(currentShape.value));
+  let touchLimit = false;
+
+  currentShape.value.forEach((item: any) => {
+    if (item[0] < 1) {
+      touchLimit = true;
+    }
+    if (dataList.value[item[1]][item[0] - 1] >= 100) {
+      touchLimit = true;
+    }
+  });
+  if (!touchLimit) currentShape.value.forEach((item: any) => item[0]--);
+
+  if (!touchLimit) landing(currentShape.value, old);
+}
+function swipeRight() {
+  if (!currentShape.value) return;
+  let old = JSON.parse(JSON.stringify(currentShape.value));
+  let touchLimit = false;
+
+  currentShape.value.forEach((item: any) => {
+    if (item[0] >= width - 1) {
+      touchLimit = true;
+    }
+    if (dataList.value[item[1]][item[0] + 1] >= 100) {
+      touchLimit = true;
+    }
+  });
+  if (!touchLimit) currentShape.value.forEach((item: any) => item[0]++);
+
+  if (!touchLimit) landing(currentShape.value, old);
+}
+function swipeUp(e) {
+  if (!currentShape.value) return;
+  let old = JSON.parse(JSON.stringify(currentShape.value));
+  let touchLimit = false;
+
+  rotate();
+
+  if (!touchLimit) landing(currentShape.value, old);
+}
+
+function swipeDown(e) {
+  falling();
+}
+
 let currentState = 0;
 
 function rotate() {
@@ -308,6 +360,7 @@ async function gameover() {
 <style lang="scss" scoped>
 .container {
   padding: 20px;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -316,7 +369,6 @@ async function gameover() {
     // width: 400px;
     border: 0.5px solid;
     border-radius: 4px;
-    flex: 1;
     overflow: hidden;
     .col {
       // box-sizing: border-box;
@@ -379,6 +431,6 @@ async function gameover() {
   }
 }
 .status {
-  height: 64px;
+  min-height: 64px;
 }
 </style>

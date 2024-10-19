@@ -2,7 +2,7 @@
   "name": "tetris",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --open",
     "build": "vite build",
     "preview": "vite preview"
   },
