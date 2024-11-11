@@ -52,14 +52,14 @@
 <script setup lang="ts">
 import shapes from "./shapes";
 import states from "./states";
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref } from "vue";
 
 onMounted(() => {
   initGame();
   bindOperate();
 });
 
-let shapeNums = {
+let shapeNums: any = {
   O: 1,
   S: 2,
   Z: 3,
@@ -75,7 +75,7 @@ let grid = ref(40);
 let gamearea = ref();
 let dataList = ref<any>();
 let timer = ref<any>(null);
-let score = ref<any>(9990);
+let score = ref<any>(0);
 
 function handleResize() {
   grid.value = (window.innerHeight - 64 - 40 - 100) / height;
@@ -185,7 +185,7 @@ function falling() {
     // 加分
     if (line > 0) score.value += scores[line];
     // 到顶了
-    if (dataList.value[0].some((item) => item >= 100)) {
+    if (dataList.value[0].some((item: any) => item >= 100)) {
       gameover();
       return;
     }
@@ -272,7 +272,7 @@ function swipeRight() {
 
   if (!touchLimit) landing(currentShape.value, old);
 }
-function swipeUp(e) {
+function swipeUp() {
   if (!currentShape.value) return;
   let old = JSON.parse(JSON.stringify(currentShape.value));
   let touchLimit = false;
@@ -282,7 +282,7 @@ function swipeUp(e) {
   if (!touchLimit) landing(currentShape.value, old);
 }
 
-function swipeDown(e) {
+function swipeDown() {
   falling();
 }
 

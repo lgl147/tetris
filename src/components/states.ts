@@ -1,4 +1,4 @@
-export default {
+let state: any = {
   I: [
     [
       [1, -1],
@@ -120,3 +120,5 @@ export default {
     ],
   ],
 };
+
+export default state;
