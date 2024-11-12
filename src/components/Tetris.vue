@@ -41,7 +41,7 @@
             :class="col > 0 ? `solid shape${col}` : ''"
             :style="`width: ${grid}px;height: ${grid}px`"
           >
-            <!-- {{ col }} -->
+            {{ col }}
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ let shapeNums: any = {
 
 let width = 10;
 let height = 20;
-let grid = ref(40);
+let grid = ref(100);
 let gamearea = ref();
 let dataList = ref<any>();
 let timer = ref<any>(null);
@@ -379,6 +379,8 @@ async function gameover() {
       justify-content: center;
       align-items: center;
       transition: all 0.1s;
+      font-size: 12px;
+      font-weight: 400;
     }
 
     .solid {
@@ -390,7 +392,7 @@ async function gameover() {
     .shape1,
     .shape101 {
       // O
-      background-color: yellow;
+      background: rgb(188, 188, 0);
     }
     .shape2,
     .shape102 {
@@ -415,12 +417,12 @@ async function gameover() {
     .shape6,
     .shape106 {
       // J
-      background-color: pink;
+      background-color: palevioletred;
     }
     .shape7,
     .shape107 {
       // I
-      background-color: blue;
+      background: steelblue;
     }
   }
   .btns {
